@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:local="clr-namespace:DirectSalesApp.Views"
+            x:Class="DirectSalesApp.Views.MainPage"
+            Title="Direct Sales App">
+
+    <!-- Sales Tab -->
+    <NavigationPage Title="Sales" IconImageSource="cart.png">
+        <x:Arguments>
+            <local:SalesPage />
+        </x:Arguments>
+    </NavigationPage>
+    
+    <!-- Products Tab -->
+    <NavigationPage Title="Products" IconImageSource="product.png">
+        <x:Arguments>
+            <ContentPage Title="Products">
+                <Label Text="Products page will go here" 
+                       VerticalOptions="Center" 
+                       HorizontalOptions="Center" />
+            </ContentPage>
+        </x:Arguments>
+    </NavigationPage>
+    
+    <!-- Suppliers Tab -->
+    <NavigationPage Title="Suppliers" IconImageSource="supplier.png">
+        <x:Arguments>
+            <ContentPage Title="Suppliers">
+                <Label Text="Suppliers page will go here" 
+                       VerticalOptions="Center" 
+                       HorizontalOptions="Center" />
+            </ContentPage>
+        </x:Arguments>
+    </NavigationPage>
+    
+    <!-- Reports Tab -->
+    <NavigationPage Title="Reports" IconImageSource="report.png">
+        <x:Arguments>
+            <ContentPage Title="Reports">
+                <Label Text="Reports page will go here" 
+                       VerticalOptions="Center" 
+                       HorizontalOptions="Center" />
+            </ContentPage>
+        </x:Arguments>
+    </NavigationPage>
+    
+    <!-- Settings Tab -->
+    <NavigationPage Title="Settings" IconImageSource="settings.png">
+        <x:Arguments>
+            <ContentPage Title="Settings">
+                <StackLayout Padding="20" Spacing="20" VerticalOptions="Center">
+                    <Button Text="Logout" 
+                            BackgroundColor="#F44336" 
+                            TextColor="White" 
+                            CornerRadius="5"
+                            Command="{Binding LogoutCommand}" />
+                </StackLayout>
+            </ContentPage>
+        </x:Arguments>
+    </NavigationPage>
+</TabbedPage> 

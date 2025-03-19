@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:DirectSalesApp.ViewModels"
+             x:Class="DirectSalesApp.Views.LoginPage"
+             Title="{Binding Title}">
+
+    <ContentPage.BindingContext>
+        <viewmodels:LoginViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <Grid Padding="20" VerticalOptions="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- App Logo/Title -->
+            <StackLayout Grid.Row="0" HorizontalOptions="Center" Margin="0,0,0,40">
+                <Label Text="Direct Sales App" FontSize="28" FontAttributes="Bold" TextColor="#2196F3" />
+                <BoxView HeightRequest="2" BackgroundColor="#2196F3" HorizontalOptions="Fill" />
+            </StackLayout>
+
+            <!-- Error Message -->
+            <Frame Grid.Row="1" IsVisible="{Binding IsError}" BackgroundColor="#FFEBEE" 
+                   BorderColor="#D32F2F" Padding="10" Margin="0,0,0,20" HasShadow="False">
+                <Label Text="{Binding ErrorMessage}" TextColor="#D32F2F" FontSize="14" />
+            </Frame>
+
+            <!-- Username -->
+            <Frame Grid.Row="2" BorderColor="#E0E0E0" Padding="5" HasShadow="False" Margin="0,0,0,15">
+                <StackLayout>
+                    <Label Text="Username" FontSize="Small" TextColor="#757575" />
+                    <Entry Text="{Binding Username}" Placeholder="Enter username" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Password -->
+            <Frame Grid.Row="3" BorderColor="#E0E0E0" Padding="5" HasShadow="False" Margin="0,0,0,25">
+                <StackLayout>
+                    <Label Text="Password" FontSize="Small" TextColor="#757575" />
+                    <Entry Text="{Binding Password}" Placeholder="Enter password" IsPassword="True" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Login Button -->
+            <Button Grid.Row="4" Text="LOGIN" Command="{Binding LoginCommand}" 
+                    BackgroundColor="#2196F3" TextColor="White" 
+                    CornerRadius="5" HeightRequest="50" FontAttributes="Bold" />
+
+            <!-- Activity Indicator -->
+            <ActivityIndicator Grid.Row="5" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" 
+                               Color="#2196F3" Margin="0,20,0,0" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage> 

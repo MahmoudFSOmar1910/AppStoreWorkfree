@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DirectSalesApp.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Application global styles go here -->
+            
+            <!-- Colors -->
+            <Color x:Key="PrimaryColor">#2196F3</Color>
+            <Color x:Key="PrimaryDarkColor">#1976D2</Color>
+            <Color x:Key="AccentColor">#FF4081</Color>
+            <Color x:Key="SuccessColor">#4CAF50</Color>
+            <Color x:Key="ErrorColor">#F44336</Color>
+            <Color x:Key="TextPrimaryColor">#212121</Color>
+            <Color x:Key="TextSecondaryColor">#757575</Color>
+            <Color x:Key="BorderColor">#E0E0E0</Color>
+            <Color x:Key="BackgroundColor">#FFFFFF</Color>
+            
+            <!-- Converters -->
+            <BooleanConverter x:Key="NotConverter" FalseObject="True" TrueObject="False" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application> 

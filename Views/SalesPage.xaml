@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:DirectSalesApp.ViewModels"
+             x:Class="DirectSalesApp.Views.SalesPage"
+             Title="{Binding Title}">
+
+    <ContentPage.BindingContext>
+        <viewmodels:SalesViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <Grid Padding="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Error Message -->
+            <Frame Grid.Row="0" IsVisible="{Binding IsError}" BackgroundColor="#FFEBEE" 
+                   BorderColor="#D32F2F" Padding="10" Margin="0,0,0,10" HasShadow="False">
+                <Label Text="{Binding ErrorMessage}" TextColor="#D32F2F" FontSize="14" />
+            </Frame>
+
+            <!-- Sale Header with Invoice Number and Cashier -->
+            <Grid Grid.Row="1" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                
+                <Frame Grid.Column="0" Grid.Row="0" BorderColor="#E0E0E0" Padding="5" HasShadow="False" Margin="0,0,5,5">
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Invoice #:" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label Text="{Binding InvoiceNumber}" VerticalOptions="Center" />
+                        <Button Text="⟳" Command="{Binding GenerateInvoiceNumberCommand}" 
+                                FontSize="12" WidthRequest="30" HeightRequest="30" 
+                                BackgroundColor="#F5F5F5" TextColor="#757575" 
+                                CornerRadius="15" Padding="0" Margin="5,0,0,0" />
+                    </StackLayout>
+                </Frame>
+                
+                <Frame Grid.Column="1" Grid.Row="0" BorderColor="#E0E0E0" Padding="5" HasShadow="False" Margin="5,0,0,5">
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Cashier:" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label Text="{Binding CashierName}" VerticalOptions="Center" />
+                    </StackLayout>
+                </Frame>
+                
+                <Label Grid.ColumnSpan="2" Grid.Row="1" Text="Current Date/Time:" 
+                       FontSize="Small" TextColor="#757575" HorizontalOptions="End" Margin="0,0,5,0">
+                    <Label.Triggers>
+                        <EventTrigger Event="Loaded">
+                            <EventTrigger.Actions>
+                                <BeginAnimation>
+                                    <BeginAnimation.Animation>
+                                        <Animation x:Name="DateTimeAnimation" 
+                                                   RepeatForever="True"
+                                                   Duration="0:0:1">
+                                            <Animation.Behaviors>
+                                                <DataTriggerBehavior Binding="{Binding Source={x:Static x:DateTime.Now}, Path=TimeOfDay}" Value="{x:Null}">
+                                                    <SetProperty
+                                                        TargetObject="{x:Reference DateTimeLabel}"
+                                                        Property="Text"
+                                                        Value="{Binding Source={x:Static x:DateTime.Now}, StringFormat='{0:MM/dd/yyyy HH:mm:ss}'}" />
+                                                </DataTriggerBehavior>
+                                            </Animation.Behaviors>
+                                        </Animation>
+                                    </BeginAnimation.Animation>
+                                </BeginAnimation>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                    </Label.Triggers>
+                </Label>
+                <Label x:Name="DateTimeLabel" Grid.ColumnSpan="2" Grid.Row="1" HorizontalOptions="End" 
+                       FontSize="Small" Text="{Binding Source={x:Static x:DateTime.Now}, StringFormat='{0:MM/dd/yyyy HH:mm:ss}'}" />
+            </Grid>
+
+            <!-- Barcode Scanning Section -->
+            <Grid Grid.Row="2" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <Frame Grid.Column="0" BorderColor="#E0E0E0" Padding="5" HasShadow="False">
+                    <Entry Text="{Binding Barcode}" Placeholder="Enter or scan barcode" />
+                </Frame>
+                
+                <Button Grid.Column="1" Text="Scan" Command="{Binding ScanBarcodeCommand}" 
+                        BackgroundColor="#2196F3" TextColor="White" 
+                        CornerRadius="5" Margin="5,0,0,0" />
+            </Grid>
+
+            <!-- Cart Items List -->
+            <Frame Grid.Row="3" BorderColor="#E0E0E0" Padding="5" HasShadow="False" Margin="0,0,0,10">
+                <ListView ItemsSource="{Binding Items}" HasUnevenRows="True" SelectionMode="None">
+                    <ListView.Header>
+                        <Grid Padding="5" BackgroundColor="#EEEEEE">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <Label Grid.Column="0" Text="Product" FontAttributes="Bold" />
+                            <Label Grid.Column="1" Text="Price" FontAttributes="Bold" HorizontalOptions="End" />
+                            <Label Grid.Column="2" Text="Qty" FontAttributes="Bold" HorizontalOptions="Center" Margin="10,0" />
+                            <Label Grid.Column="3" Text="Discount" FontAttributes="Bold" HorizontalOptions="End" Margin="0,0,10,0" />
+                            <Label Grid.Column="4" Text="Total" FontAttributes="Bold" HorizontalOptions="End" />
+                            <Label Grid.Column="5" Text="" />
+                        </Grid>
+                    </ListView.Header>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid Padding="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <!-- Product Name -->
+                                    <Label Grid.Column="0" Text="{Binding ProductName}" VerticalOptions="Center" />
+                                    
+                                    <!-- Unit Price -->
+                                    <Label Grid.Column="1" Text="{Binding UnitPrice, StringFormat='{0:C}'}" 
+                                           VerticalOptions="Center" HorizontalOptions="End" />
+                                    
+                                    <!-- Quantity with +/- buttons -->
+                                    <Grid Grid.Column="2" Margin="10,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <Button Grid.Column="0" Text="-" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SalesViewModel}}, Path=DecreaseQuantityCommand}" 
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#F5F5F5" TextColor="#757575" 
+                                                WidthRequest="30" HeightRequest="30" CornerRadius="15" 
+                                                Padding="0" FontSize="16" />
+                                                
+                                        <Label Grid.Column="1" Text="{Binding Quantity}" 
+                                               VerticalOptions="Center" HorizontalOptions="Center" 
+                                               Margin="5,0" FontAttributes="Bold" />
+                                               
+                                        <Button Grid.Column="2" Text="+" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SalesViewModel}}, Path=IncreaseQuantityCommand}" 
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#F5F5F5" TextColor="#757575" 
+                                                WidthRequest="30" HeightRequest="30" CornerRadius="15" 
+                                                Padding="0" FontSize="16" />
+                                    </Grid>
+                                    
+                                    <!-- Discount -->
+                                    <Label Grid.Column="3" Text="{Binding Discount, StringFormat='{0:C}'}" 
+                                           VerticalOptions="Center" HorizontalOptions="End" Margin="0,0,10,0" />
+                                    
+                                    <!-- Total -->
+                                    <Label Grid.Column="4" Text="{Binding Total, StringFormat='{0:C}'}" 
+                                           VerticalOptions="Center" HorizontalOptions="End" FontAttributes="Bold" />
+                                    
+                                    <!-- Remove Button -->
+                                    <Button Grid.Column="5" Text="✕" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SalesViewModel}}, Path=RemoveItemCommand}" 
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#F44336" TextColor="White" 
+                                            WidthRequest="30" HeightRequest="30" CornerRadius="15" 
+                                            Padding="0" FontSize="12" Margin="5,0,0,0" />
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Frame>
+
+            <!-- Summary Section -->
+            <Grid Grid.Row="4" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <!-- Customer Information with Tabs -->
+                <Frame Grid.Column="0" BorderColor="#E0E0E0" Padding="5" HasShadow="False">
+                    <StackLayout>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Text="Customer Information" FontAttributes="Bold" />
+                            <Label Grid.Column="1" Text="Payment Information" FontAttributes="Bold" />
+                        </Grid>
+                        
+                        <BoxView HeightRequest="1" Color="#E0E0E0" Margin="0,5,0,10" />
+                        
+                        <ScrollView>
+                            <StackLayout>
+                                <!-- Row 1: Name, Phone -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Entry Grid.Column="0" Placeholder="Customer Name" Text="{Binding CustomerName}" Margin="0,0,5,0" />
+                                    <Entry Grid.Column="1" Placeholder="Customer Phone" Text="{Binding CustomerPhone}" Margin="5,0,0,0" />
+                                </Grid>
+                                
+                                <!-- Row 2: Address -->
+                                <Entry Placeholder="Address" Text="{Binding CustomerAddress}" Margin="0,5,0,0" />
+                                
+                                <!-- Row 3: City, State, Zip -->
+                                <Grid Margin="0,5,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Entry Grid.Column="0" Placeholder="City" Text="{Binding CustomerCity}" Margin="0,0,5,0" />
+                                    <Entry Grid.Column="1" Placeholder="State" Text="{Binding CustomerState}" Margin="5,0,5,0" />
+                                    <Entry Grid.Column="2" Placeholder="Zip Code" Text="{Binding CustomerZipCode}" Margin="5,0,0,0" />
+                                </Grid>
+                                
+                                <!-- Row 4: Payment Method -->
+                                <Picker Title="Payment Method" SelectedItem="{Binding SelectedPaymentMethod}" Margin="0,5,0,0">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type="{x:Type x:String}">
+                                            <x:String>Cash</x:String>
+                                            <x:String>Credit Card</x:String>
+                                            <x:String>Debit Card</x:String>
+                                            <x:String>Bank Transfer</x:String>
+                                            <x:String>Mobile Money</x:String>
+                                            <x:String>Other</x:String>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
+                                
+                                <!-- Row 5: Payment Reference -->
+                                <Entry Placeholder="Payment Reference (Optional)" Text="{Binding PaymentReference}" Margin="0,5,0,0"
+                                       IsVisible="{Binding SelectedPaymentMethod, Converter={StaticResource NotCashConverter}}" />
+                            </StackLayout>
+                        </ScrollView>
+                    </StackLayout>
+                </Frame>
+                
+                <!-- Sale Totals -->
+                <Label Grid.Column="1" Text="Sub Total:" HorizontalOptions="End" VerticalOptions="Center" Margin="10,5" />
+                <Label Grid.Column="1" Text="Tax:" HorizontalOptions="End" VerticalOptions="Center" Margin="10,5" Grid.Row="1" />
+                <Label Grid.Column="1" Text="Discount:" HorizontalOptions="End" VerticalOptions="Center" Margin="10,5" Grid.Row="2" />
+                <Label Grid.Column="1" Text="Total:" HorizontalOptions="End" VerticalOptions="Center" FontAttributes="Bold" Margin="10,5" Grid.Row="3" />
+                
+                <Label Grid.Column="2" Text="{Binding SubTotal, StringFormat='{0:C}'}" HorizontalOptions="End" VerticalOptions="Center" Margin="10,5" />
+                <Label Grid.Column="2" Text="{Binding Tax, StringFormat='{0:C}'}" HorizontalOptions="End" VerticalOptions="Center" Margin="10,5" Grid.Row="1" />
+                <Label Grid.Column="2" Text="{Binding Discount, StringFormat='{0:C}'}" HorizontalOptions="End" VerticalOptions="Center" Margin="10,5" Grid.Row="2" />
+                <Label Grid.Column="2" Text="{Binding Total, StringFormat='{0:C}'}" HorizontalOptions="End" VerticalOptions="Center" FontAttributes="Bold" FontSize="Large" TextColor="#2196F3" Margin="10,5" Grid.Row="3" />
+            </Grid>
+
+            <!-- Action Buttons -->
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="0" Text="CLEAR" Command="{Binding ClearSaleCommand}" 
+                        BackgroundColor="#F5F5F5" TextColor="#757575" 
+                        CornerRadius="5" HeightRequest="50" FontAttributes="Bold" Margin="0,0,5,0" />
+                        
+                <Button Grid.Column="1" Text="COMPLETE SALE" Command="{Binding CompleteSaleCommand}" 
+                        BackgroundColor="#4CAF50" TextColor="White" 
+                        CornerRadius="5" HeightRequest="50" FontAttributes="Bold" Margin="5,0,0,0" />
+            </Grid>
+
+            <!-- Activity Indicator -->
+            <ActivityIndicator Grid.RowSpan="6" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" 
+                               Color="#2196F3" VerticalOptions="Center" HorizontalOptions="Center" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage> 
